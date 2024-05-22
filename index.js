@@ -21,7 +21,7 @@ app.post('/setHumedad', (req, res) => {
 });
 
 app.get('/getHumedad', (req, res) => {
-  res.send(currentHumedad)
+  res.status(200).send(currentHumedad)
 });
 
 
