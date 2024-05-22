@@ -7,10 +7,23 @@ const PORT = process.env.PORT || 3000
 
 app.use(cors({ origin: 'http://localhost:5173' }))
 app.use(express.json())
-// app.use(userRouter, habitacionRouter, reservaRouter)
 
 let currentCommand = "STOP"; // Comando inicial
 let clients = []; // Lista de clientes conectados
+let currentHumedad = 0; // Humedad inicial
+
+// Endpoints para recibir y enviar humedad
+app.post('/setHumedad', (req, res) => {
+  const humedad = req.body.humedad;
+  console.log(`Humedad set to ${humedad}`)
+  currentHumedad = humedad;
+  res.status(200).send(`Humedad set to ${humedad}`);
+});
+
+app.get('/getHumedad', (req, res) => {
+  res.send(currentHumedad)
+});
+
 
 // Endpoint para actualizar el comando
 app.post('/setCommand', (req, res) => {
@@ -26,7 +39,7 @@ app.post('/setCommand', (req, res) => {
     }
 });
   
-  // Endpoint para obtener el comando actual vía SSE
+  // Endpoint para obtener el comando actual por SSE
 app.get('/getCommand', (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
