@@ -10,21 +10,8 @@ app.use(express.json())
 
 let currentCommand = "STOP"; // Comando inicial
 let clients = []; // Lista de clientes conectados
-let currentHumedad = 0; // Humedad inicial
 let currentDatos = {humedad: 0, temperatura: 0}; // Datos inicial
-
-// Endpoints para recibir y enviar humedad
-app.post('/setHumedad', (req, res) => {
-  const humedad = req.body.humedad;
-  console.log(`Humedad set to ${humedad}`)
-  currentHumedad = humedad;
-  res.status(200).send(`Humedad set to ${humedad}`);
-});
-
-app.get('/getHumedad', (req, res) => {
-  console.log("Enviando Humedad: ", currentHumedad)
-  res.status(200).json({humedad: currentHumedad})
-});
+let currentProgramacionRiego = {humedad: -1,horaInicio: -1, horaFin: -1, temperatura: -1}; // Programacion de riego inicial
 
 app.post('/setDatos', (req, res) => {
   const humedad = req.body.humedad;
@@ -82,10 +69,48 @@ app.get('/getCommandIT', (req, res) => {
     res.send(currentCommand)
 })
 
-app.get('/test', (req, res) => {
-    console.log("Peticion recibida");
-    res.send('Hola')
+app.get('/getProgramacionRiegoIT', (req, res) => {
+  res.send(currentProgramacionRiego)
 })
+
+app.get('/getProgramacionRiego', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders();
+
+  res.write(`data: ${JSON.stringify(currentProgramacionRiego)}\n\n`);
+
+  const clientId = Date.now();
+  const newClient = {
+    id: clientId,
+    res
+  };
+  clients.push(newClient);
+
+  req.on('close', () => {
+    clients = clients.filter(client => client.id !== clientId);
+  });
+});
+
+app.post('/setProgramacionRiego', (req, res) => {
+  const {
+    humedad,
+    temperatura,
+    startTime,
+    endTime
+  } = req.body;
+  console.log(`Datos set to ${humedad}, ${temperatura}, ${startTime}, ${endTime}`)
+  currentProgramacionRiego = {
+    humedad,
+    temperatura,
+    startTime,
+    endTime
+  };
+  res.status(200).send(`Datos set to ${humedad}, ${temperatura}, ${startTime}, ${endTime}`);
+
+  clients.forEach(client => client.res.write(`data: ${JSON.stringify(currentProgramacionRiego)}\n\n`));
+});
 
 app.listen(PORT, () => {
     console.log(`app is running on port ${PORT}`)
