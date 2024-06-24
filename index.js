@@ -30,7 +30,7 @@ app.post('/setDatos', (req, res) => {
   const humedad = req.body.humedad;
   const temperatura = req.body.temperatura
   console.log(`Datos set to ${humedad}, ${temperatura}`)
-  currentHumedad = humedad;
+  currentDatos = {humedad: humedad, temperatura: temperatura};
   res.status(200).send(`Datos set to ${humedad}, ${temperatura}`);
 });
 
