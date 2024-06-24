@@ -105,7 +105,7 @@ app.post('/setProgramacionRiego', (req, res) => {
   };
   res.status(200).send(`Datos set to ${humedad}, ${startTime}`);
 
-  clients.forEach(client => client.res.write(`prog: ${JSON.stringify(currentProgramacionRiego)}\n\n`));
+  clients.forEach(client => client.res.write(`data: ${JSON.stringify(currentProgramacionRiego)}\n\n`));
 });
 
 app.listen(PORT, () => {
