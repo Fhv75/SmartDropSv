@@ -98,12 +98,12 @@ app.post('/setProgramacionRiego', (req, res) => {
     humedad,
     startTime,
   } = req.body;
-  console.log(`Datos set to ${humedad}, ${temperatura}, ${startTime}, ${endTime}`)
+  console.log(`Datos set to ${humedad}, ${startTime}`)
   currentProgramacionRiego = {
     humedad,
     startTime,
   };
-  res.status(200).send(`Datos set to ${humedad}, ${temperatura}, ${startTime}, ${endTime}`);
+  res.status(200).send(`Datos set to ${humedad}, ${startTime}`);
 
   clients.forEach(client => client.res.write(`prog: ${JSON.stringify(currentProgramacionRiego)}\n\n`));
 });
