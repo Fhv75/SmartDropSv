@@ -11,7 +11,7 @@ app.use(express.json())
 let currentCommand = "STOP"; // Comando inicial
 let clients = []; // Lista de clientes conectados
 let currentDatos = {humedad: 0, temperatura: 0}; // Datos inicial
-let currentProgramacionRiego = {humedad: -1,horaInicio: -1, horaFin: -1, temperatura: -1}; // Programacion de riego inicial
+let currentProgramacionRiego = {humedad: -1,horaInicio: -1}; // Programacion de riego inicial
 
 app.post('/setDatos', (req, res) => {
   const humedad = req.body.humedad;
@@ -96,20 +96,16 @@ app.get('/getProgramacionRiego', (req, res) => {
 app.post('/setProgramacionRiego', (req, res) => {
   const {
     humedad,
-    temperatura,
     startTime,
-    endTime
   } = req.body;
   console.log(`Datos set to ${humedad}, ${temperatura}, ${startTime}, ${endTime}`)
   currentProgramacionRiego = {
     humedad,
-    temperatura,
     startTime,
-    endTime
   };
   res.status(200).send(`Datos set to ${humedad}, ${temperatura}, ${startTime}, ${endTime}`);
 
-  clients.forEach(client => client.res.write(`data: ${JSON.stringify(currentProgramacionRiego)}\n\n`));
+  clients.forEach(client => client.res.write(`prog: ${JSON.stringify(currentProgramacionRiego)}\n\n`));
 });
 
 app.listen(PORT, () => {
