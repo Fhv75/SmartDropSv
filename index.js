@@ -11,6 +11,7 @@ app.use(express.json())
 let currentCommand = "STOP"; // Comando inicial
 let clients = []; // Lista de clientes conectados
 let currentHumedad = 0; // Humedad inicial
+let currentDatos = {humedad: 0, temperatura: 0}; // Datos inicial
 
 // Endpoints para recibir y enviar humedad
 app.post('/setHumedad', (req, res) => {
@@ -23,6 +24,19 @@ app.post('/setHumedad', (req, res) => {
 app.get('/getHumedad', (req, res) => {
   console.log("Enviando Humedad: ", currentHumedad)
   res.status(200).json({humedad: currentHumedad})
+});
+
+app.post('/setDatos', (req, res) => {
+  const humedad = req.body.humedad;
+  const temperatura = req.body.temperatura
+  console.log(`Datos set to ${humedad}, ${temperatura}`)
+  currentHumedad = humedad;
+  res.status(200).send(`Datos set to ${humedad}, ${temperatura}`);
+});
+
+app.get('/getDatos', (req, res) => {
+  console.log("Enviando Datos: ", currentDatos)
+  res.status(200).json({humedad: currentDatos.humedad, temperatura: currentDatos.temperatura})
 });
 
 
